@@ -9,7 +9,7 @@ import uuid
 import sqlite3
 from contextlib import contextmanager
 from datetime import datetime, timezone
-from typing import List, Optional
+from typing import List, Optional, Union
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -94,10 +94,11 @@ def get_user(request: Request) -> dict:
     return {"token": token, **USERS[token]}
 
 
-def parse_emails(raw: str) -> List[str]:
-    """Divide string de emails por vírgula ou ponto-e-vírgula, normaliza."""
+def parse_emails(raw) -> List[str]:
     import re
-    parts = re.split(r"[,;]", raw)
+    if isinstance(raw, list):
+        return [e.strip().lower() for e in raw if e.strip()]
+    parts = re.split(r"[,;]", raw or "")
     return [e.strip().lower() for e in parts if e.strip()]
 
 
@@ -138,8 +139,8 @@ class LoginRequest(BaseModel):
 
 
 class SendEmailRequest(BaseModel):
-    to: str                      # um ou mais emails separados por , ou ;
-    cc: Optional[str] = ""       # um ou mais emails separados por , ou ;
+    to: Union[str, List[str]]             # string separada por , ou ; OU lista JSON
+    cc: Union[str, List[str], None] = "" # string separada por , ou ; OU lista JSON
     subject: str
     body: str
 
