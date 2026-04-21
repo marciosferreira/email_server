@@ -28,7 +28,7 @@
           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
       <p id="login-error" class="text-red-500 text-sm hidden"></p>
-      <button onclick="doLogin()"
+      <button type="button" onclick="doLogin()"
         class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition-colors">
         Entrar
       </button>
@@ -47,7 +47,7 @@
     </div>
     <div class="flex items-center gap-4">
       <span id="header-email" class="text-sm text-gray-500"></span>
-      <button onclick="doLogout()" class="text-sm text-gray-400 hover:text-red-500 transition-colors">Sair</button>
+      <button type="button" onclick="doLogout()" class="text-sm text-gray-400 hover:text-red-500 transition-colors">Sair</button>
     </div>
   </header>
 
@@ -55,7 +55,7 @@
 
     <!-- Sidebar -->
     <aside class="w-52 bg-white border-r p-3 flex flex-col gap-1">
-      <button onclick="compose()"
+      <button type="button" onclick="compose()"
         class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-lg mb-3 transition-colors">
         ✏️ Escrever
       </button>
@@ -95,7 +95,7 @@
 
       <!-- Leitura de email -->
       <div id="view-read" class="p-6 hidden">
-        <button onclick="backToList()" class="text-sm text-blue-600 hover:underline mb-4 flex items-center gap-1">
+        <button type="button" onclick="backToList()" class="text-sm text-blue-600 hover:underline mb-4 flex items-center gap-1">
           ← Voltar
         </button>
         <div class="bg-white rounded-xl shadow-sm p-6">
@@ -109,7 +109,7 @@
                 <p><span class="font-medium text-gray-600">Data:</span> <span id="read-date"></span></p>
               </div>
             </div>
-            <button id="btn-delete" onclick="deleteCurrentEmail()"
+            <button type="button" id="btn-delete" onclick="deleteCurrentEmail()"
               class="text-xs text-red-400 hover:text-red-600 border border-red-200 hover:border-red-400 px-3 py-1 rounded-lg transition-colors shrink-0">
               🗑 Deletar
             </button>
@@ -166,11 +166,11 @@
             <p id="compose-ok" class="text-green-600 text-sm hidden">✅ Email enviado com sucesso!</p>
 
             <div class="flex gap-2">
-              <button onclick="sendEmail()"
+              <button type="button" onclick="sendEmail()"
                 class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
                 Enviar
               </button>
-              <button onclick="showInbox()"
+              <button type="button" onclick="showInbox()"
                 class="text-sm text-gray-500 hover:text-gray-700 px-4 py-2 rounded-lg border hover:bg-gray-50 transition-colors">
                 Cancelar
               </button>
@@ -221,6 +221,7 @@ async function doLogin() {
     state.token = user.token;
     state.email = user.email;
     state.name  = user.name;
+    localStorage.setItem("session", JSON.stringify({ token: user.token, email: user.email, name: user.name }));
     document.getElementById("header-email").textContent = user.email;
     document.getElementById("screen-login").classList.add("hidden");
     document.getElementById("screen-app").classList.remove("hidden");
@@ -234,16 +235,34 @@ async function doLogin() {
 
 function doLogout() {
   state = { token: null, email: null, name: null, currentView: "inbox", currentEmailId: null };
+  localStorage.removeItem("session");
   document.getElementById("screen-app").classList.add("hidden");
   document.getElementById("screen-login").classList.remove("hidden");
   document.getElementById("login-token").value = "";
   document.getElementById("login-password").value = "";
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("login-password").addEventListener("keydown", e => {
     if (e.key === "Enter") doLogin();
   });
+
+  const saved = localStorage.getItem("session");
+  if (saved) {
+    try {
+      const session = JSON.parse(saved);
+      state.token = session.token;
+      state.email = session.email;
+      state.name  = session.name;
+      document.getElementById("header-email").textContent = session.email;
+      document.getElementById("screen-login").classList.add("hidden");
+      document.getElementById("screen-app").classList.remove("hidden");
+      await loadUsers();
+      await showInbox();
+    } catch {
+      localStorage.removeItem("session");
+    }
+  }
 });
 
 // ---------------------------------------------------------
@@ -298,10 +317,12 @@ async function showInbox() {
   document.getElementById("list-title").textContent = "Caixa de Entrada";
 
   const res  = await fetch(`${API}/emails/inbox`, { headers: authHeaders() });
+  if (!res.ok) return;
   const data = await res.json();
-  renderList(data.messages, "inbox");
+  const messages = data.messages || [];
+  renderList(messages, "inbox");
 
-  const unread = data.messages.filter(m => !m.read).length;
+  const unread = messages.filter(m => !m.read).length;
   const badge  = document.getElementById("badge-inbox");
   if (unread > 0) { badge.textContent = unread; badge.classList.remove("hidden"); }
   else { badge.classList.add("hidden"); }
@@ -314,8 +335,9 @@ async function showSent() {
   document.getElementById("list-title").textContent = "Enviados";
 
   const res  = await fetch(`${API}/emails/sent`, { headers: authHeaders() });
+  if (!res.ok) return;
   const data = await res.json();
-  renderList(data.messages, "sent");
+  renderList(data.messages || [], "sent");
 }
 
 // ---------------------------------------------------------
@@ -387,25 +409,27 @@ async function readEmail(id) {
   showView("read");
 }
 
-function backToList() {
-  if (state.currentView === "sent") showSent();
-  else showInbox();
+async function backToList() {
+  if (state.currentView === "sent") await showSent();
+  else await showInbox();
 }
 
 // ---------------------------------------------------------
 // Delete
 // ---------------------------------------------------------
 async function deleteEmail(id) {
-  await fetch(`${API}/emails/${id}`, { method: "DELETE", headers: authHeaders() });
-  if (state.currentView === "sent") showSent();
-  else showInbox();
+  const res = await fetch(`${API}/emails/${id}`, { method: "DELETE", headers: authHeaders() });
+  if (!res.ok) return;
+  if (state.currentView === "sent") await showSent();
+  else await showInbox();
 }
 
 async function deleteCurrentEmail() {
   if (!state.currentEmailId) return;
-  await fetch(`${API}/emails/${state.currentEmailId}`, { method: "DELETE", headers: authHeaders() });
+  const res = await fetch(`${API}/emails/${state.currentEmailId}`, { method: "DELETE", headers: authHeaders() });
+  if (!res.ok) return;
   state.currentEmailId = null;
-  backToList();
+  await backToList();
 }
 
 // ---------------------------------------------------------

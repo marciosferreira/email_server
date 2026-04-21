@@ -3,7 +3,9 @@
     "allow": [
       "Bash(python -m uvicorn --version)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(git branch *)",
+      "Bash(git push *)"
     ]
   }
 }
