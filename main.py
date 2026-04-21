@@ -82,10 +82,15 @@ import json
 def get_user(request: Request) -> dict:
     auth = request.headers.get("Authorization", "")
     if not auth.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Token ausente. Use: Authorization: Bearer aluno-XX")
-    token = auth.removeprefix("Bearer ").strip()
-    if token not in USERS:
-        raise HTTPException(status_code=403, detail=f"Token inválido: '{token}'")
+        raise HTTPException(status_code=401, detail="Token ausente. Use: Authorization: Bearer <email ou token>")
+    credential = auth.removeprefix("Bearer ").strip()
+    # aceita email (aluno01@curso.ia) ou token (aluno-01)
+    if credential in USERS:
+        token = credential
+    elif credential in EMAIL_TO_TOKEN:
+        token = EMAIL_TO_TOKEN[credential]
+    else:
+        raise HTTPException(status_code=403, detail=f"Credencial inválida: '{credential}'")
     return {"token": token, **USERS[token]}
 
 
