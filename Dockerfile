@@ -5,7 +5,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY main.py .
+COPY main.py db.py email_router.py agenda_router.py ./
 COPY static/ ./static/
 
 # Volume para persistir o banco SQLite entre reinicializações
