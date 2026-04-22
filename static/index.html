@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Curso IA Mail</title>
+  <title>Curso IA — Mail & Agenda</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -13,7 +13,7 @@
   <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-sm">
     <div class="text-center mb-6">
       <div class="text-4xl mb-2">📧</div>
-      <h1 class="text-2xl font-bold text-gray-800">Curso IA Mail</h1>
+      <h1 class="text-2xl font-bold text-gray-800">Curso IA — Mail & Agenda</h1>
       <p class="text-sm text-gray-500 mt-1">Entre com suas credenciais do curso</p>
     </div>
     <div class="space-y-4">
@@ -43,11 +43,12 @@
   <header class="bg-white border-b px-6 py-3 flex items-center justify-between shadow-sm">
     <div class="flex items-center gap-2">
       <span class="text-xl">📧</span>
-      <span class="font-bold text-gray-800">Curso IA Mail</span>
+      <span class="font-bold text-gray-800">Curso IA — Mail & Agenda</span>
     </div>
     <div class="flex items-center gap-4">
       <span id="header-email" class="text-sm text-gray-500"></span>
-      <button type="button" onclick="doLogout()" class="text-sm text-gray-400 hover:text-red-500 transition-colors">Sair</button>
+      <button type="button" onclick="doLogout()"
+        class="text-sm text-gray-400 hover:text-red-500 transition-colors">Sair</button>
     </div>
   </header>
 
@@ -55,8 +56,11 @@
 
     <!-- Sidebar -->
     <aside class="w-52 bg-white border-r p-3 flex flex-col gap-1">
+
+      <!-- Email -->
+      <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide px-3 mb-1">Email</p>
       <button type="button" onclick="compose()"
-        class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-lg mb-3 transition-colors">
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-lg mb-1 transition-colors">
         ✏️ Escrever
       </button>
       <div onclick="showInbox()" id="nav-inbox"
@@ -68,12 +72,24 @@
         class="flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer text-sm font-medium text-gray-600 hover:bg-gray-100">
         📤 Enviados
       </div>
+
+      <!-- Agenda -->
+      <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide px-3 mt-4 mb-1">Agenda</p>
+      <div onclick="showAgenda()" id="nav-agenda"
+        class="flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer text-sm font-medium text-gray-600 hover:bg-gray-100">
+        📅 Meus compromissos
+      </div>
+      <button type="button" onclick="openAgendaForm()"
+        class="w-full bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2 rounded-lg mt-1 transition-colors">
+        ➕ Novo compromisso
+      </button>
+
     </aside>
 
     <!-- Main area -->
     <main class="flex-1 overflow-y-auto bg-gray-50">
 
-      <!-- Lista de emails -->
+      <!-- ===== VIEW: Lista de emails ===== -->
       <div id="view-list" class="p-6">
         <h2 id="list-title" class="text-lg font-semibold text-gray-700 mb-4">Caixa de Entrada</h2>
         <div class="bg-white rounded-xl shadow-sm overflow-hidden">
@@ -93,11 +109,10 @@
         </div>
       </div>
 
-      <!-- Leitura de email -->
+      <!-- ===== VIEW: Leitura de email ===== -->
       <div id="view-read" class="p-6 hidden">
-        <button type="button" onclick="backToList()" class="text-sm text-blue-600 hover:underline mb-4 flex items-center gap-1">
-          ← Voltar
-        </button>
+        <button type="button" onclick="backToList()"
+          class="text-sm text-blue-600 hover:underline mb-4 flex items-center gap-1">← Voltar</button>
         <div class="bg-white rounded-xl shadow-sm p-6">
           <div class="flex items-start justify-between mb-4">
             <div class="flex-1 min-w-0 pr-4">
@@ -105,11 +120,13 @@
               <div class="mt-2 space-y-0.5 text-sm text-gray-500">
                 <p><span class="font-medium text-gray-600">De:</span> <span id="read-from"></span></p>
                 <p><span class="font-medium text-gray-600">Para:</span> <span id="read-to"></span></p>
-                <p id="read-cc-row" class="hidden"><span class="font-medium text-gray-600">CC:</span> <span id="read-cc"></span></p>
+                <p id="read-cc-row" class="hidden">
+                  <span class="font-medium text-gray-600">CC:</span> <span id="read-cc"></span>
+                </p>
                 <p><span class="font-medium text-gray-600">Data:</span> <span id="read-date"></span></p>
               </div>
             </div>
-            <button type="button" id="btn-delete" onclick="deleteCurrentEmail()"
+            <button type="button" onclick="deleteCurrentEmail()"
               class="text-xs text-red-400 hover:text-red-600 border border-red-200 hover:border-red-400 px-3 py-1 rounded-lg transition-colors shrink-0">
               🗑 Deletar
             </button>
@@ -119,52 +136,40 @@
         </div>
       </div>
 
-      <!-- Composição -->
+      <!-- ===== VIEW: Composição de email ===== -->
       <div id="view-compose" class="p-6 hidden">
         <div class="bg-white rounded-xl shadow-sm p-6 max-w-2xl">
           <h2 class="text-lg font-semibold text-gray-700 mb-4">Nova Mensagem</h2>
           <div class="space-y-3">
-
-            <!-- Campo Para -->
             <div>
               <label class="block text-xs font-medium text-gray-500 mb-1">
                 Para <span class="text-gray-400 font-normal">(selecione um ou mais)</span>
               </label>
               <select id="compose-to" multiple
                 class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                style="height: 90px;">
-              </select>
+                style="height:90px;"></select>
               <p class="text-xs text-gray-400 mt-1">Segure Ctrl (Windows) ou ⌘ (Mac) para selecionar múltiplos</p>
             </div>
-
-            <!-- Campo CC -->
             <div>
               <label class="block text-xs font-medium text-gray-500 mb-1">
-                CC <span class="text-gray-400 font-normal">(opcional — selecione um ou mais)</span>
+                CC <span class="text-gray-400 font-normal">(opcional)</span>
               </label>
               <select id="compose-cc" multiple
                 class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                style="height: 90px;">
-              </select>
+                style="height:90px;"></select>
             </div>
-
-            <!-- Assunto -->
             <div>
               <label class="block text-xs font-medium text-gray-500 mb-1">Assunto</label>
               <input id="compose-subject" type="text" placeholder="Assunto do email"
                 class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
-
-            <!-- Corpo -->
             <div>
               <label class="block text-xs font-medium text-gray-500 mb-1">Mensagem</label>
               <textarea id="compose-body" rows="10" placeholder="Escreva sua mensagem aqui..."
                 class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
             </div>
-
             <p id="compose-error" class="text-red-500 text-sm hidden"></p>
             <p id="compose-ok" class="text-green-600 text-sm hidden">✅ Email enviado com sucesso!</p>
-
             <div class="flex gap-2">
               <button type="button" onclick="sendEmail()"
                 class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
@@ -179,319 +184,109 @@
         </div>
       </div>
 
+      <!-- ===== VIEW: Lista da Agenda ===== -->
+      <div id="view-agenda" class="p-6 hidden">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold text-gray-700">Minha Agenda</h2>
+          <button type="button" onclick="openAgendaForm()"
+            class="bg-green-600 hover:bg-green-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
+            ➕ Novo compromisso
+          </button>
+        </div>
+
+        <!-- Filtros -->
+        <div class="bg-white rounded-xl shadow-sm p-4 mb-4 flex flex-wrap items-end gap-3">
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">De</label>
+            <input id="agenda-filter-ini" type="date"
+              class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">Até</label>
+            <input id="agenda-filter-fim" type="date"
+              class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <button type="button" onclick="showAgenda()"
+            class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
+            Filtrar
+          </button>
+          <div class="flex gap-2 ml-2">
+            <button type="button" onclick="filterAgendaHoje()"
+              class="text-xs text-gray-600 hover:text-blue-600 border border-gray-200 hover:border-blue-300 px-3 py-2 rounded-lg transition-colors">
+              Hoje
+            </button>
+            <button type="button" onclick="filterAgendaSemana()"
+              class="text-xs text-gray-600 hover:text-blue-600 border border-gray-200 hover:border-blue-300 px-3 py-2 rounded-lg transition-colors">
+              Esta semana
+            </button>
+            <button type="button" onclick="filterAgendaTodos()"
+              class="text-xs text-gray-600 hover:text-blue-600 border border-gray-200 hover:border-blue-300 px-3 py-2 rounded-lg transition-colors">
+              Todos
+            </button>
+          </div>
+        </div>
+
+        <div id="agenda-list">
+          <p class="text-center text-gray-400 py-10">Carregando...</p>
+        </div>
+      </div>
+
+      <!-- ===== VIEW: Formulário de compromisso ===== -->
+      <div id="view-agenda-form" class="p-6 hidden">
+        <button type="button" onclick="showAgenda()"
+          class="text-sm text-blue-600 hover:underline mb-4 flex items-center gap-1">← Voltar</button>
+        <div class="bg-white rounded-xl shadow-sm p-6 max-w-lg">
+          <h2 id="agenda-form-title" class="text-lg font-semibold text-gray-700 mb-5">Novo Compromisso</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Título <span class="text-red-400">*</span></label>
+              <input id="af-titulo" type="text" placeholder="Ex: Reunião de equipe"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Descrição <span class="text-gray-400 font-normal">(opcional)</span></label>
+              <textarea id="af-descricao" rows="3" placeholder="Detalhes do compromisso..."
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"></textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Data <span class="text-red-400">*</span></label>
+              <input id="af-data" type="date"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
+            </div>
+            <div class="flex gap-3">
+              <div class="flex-1">
+                <label class="block text-xs font-medium text-gray-500 mb-1">Início <span class="text-red-400">*</span></label>
+                <input id="af-hora-ini" type="time"
+                  class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
+              </div>
+              <div class="flex-1">
+                <label class="block text-xs font-medium text-gray-500 mb-1">Fim <span class="text-red-400">*</span></label>
+                <input id="af-hora-fim" type="time"
+                  class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
+              </div>
+            </div>
+            <p id="af-error" class="text-red-500 text-sm hidden"></p>
+            <div class="flex gap-2 pt-1">
+              <button type="button" onclick="saveCompromisso()"
+                class="bg-green-600 hover:bg-green-700 text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
+                Salvar
+              </button>
+              <button type="button" onclick="showAgenda()"
+                class="text-sm text-gray-500 hover:text-gray-700 px-4 py-2 rounded-lg border hover:bg-gray-50 transition-colors">
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </main>
   </div>
 </div>
 
-<script>
-// ---------------------------------------------------------
-// Estado global
-// ---------------------------------------------------------
-let state = {
-  token: null, email: null, name: null,
-  currentView: "inbox",
-  currentEmailId: null,
-};
-
-const API = "";
-let allUsers = [];
-
-// ---------------------------------------------------------
-// Auth
-// ---------------------------------------------------------
-async function doLogin() {
-  const token    = document.getElementById("login-token").value.trim();
-  const password = document.getElementById("login-password").value.trim();
-  const errEl    = document.getElementById("login-error");
-  errEl.classList.add("hidden");
-
-  try {
-    const res = await fetch(`${API}/auth/login`, {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({ token, password }),
-    });
-    if (!res.ok) {
-      const data = await res.json();
-      errEl.textContent = data.detail || "Credenciais inválidas.";
-      errEl.classList.remove("hidden");
-      return;
-    }
-    const user = await res.json();
-    state.token = user.token;
-    state.email = user.email;
-    state.name  = user.name;
-    localStorage.setItem("session", JSON.stringify({ token: user.token, email: user.email, name: user.name }));
-    document.getElementById("header-email").textContent = user.email;
-    document.getElementById("screen-login").classList.add("hidden");
-    document.getElementById("screen-app").classList.remove("hidden");
-    await loadUsers();
-    await showInbox();
-  } catch (e) {
-    errEl.textContent = "Erro de conexão com o servidor.";
-    errEl.classList.remove("hidden");
-  }
-}
-
-function doLogout() {
-  state = { token: null, email: null, name: null, currentView: "inbox", currentEmailId: null };
-  localStorage.removeItem("session");
-  document.getElementById("screen-app").classList.add("hidden");
-  document.getElementById("screen-login").classList.remove("hidden");
-  document.getElementById("login-token").value = "";
-  document.getElementById("login-password").value = "";
-}
-
-document.addEventListener("DOMContentLoaded", async () => {
-  document.getElementById("login-password").addEventListener("keydown", e => {
-    if (e.key === "Enter") doLogin();
-  });
-
-  const saved = localStorage.getItem("session");
-  if (saved) {
-    try {
-      const session = JSON.parse(saved);
-      state.token = session.token;
-      state.email = session.email;
-      state.name  = session.name;
-      document.getElementById("header-email").textContent = session.email;
-      document.getElementById("screen-login").classList.add("hidden");
-      document.getElementById("screen-app").classList.remove("hidden");
-      await loadUsers();
-      await showInbox();
-    } catch {
-      localStorage.removeItem("session");
-    }
-  }
-});
-
-// ---------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------
-function authHeaders() {
-  return { "Authorization": `Bearer ${state.token}`, "Content-Type": "application/json" };
-}
-
-function formatDate(iso) {
-  return new Date(iso).toLocaleString("pt-BR", { day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" });
-}
-
-function setNav(active) {
-  document.getElementById("nav-inbox").className =
-    "flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer text-sm font-medium " +
-    (active === "inbox" ? "text-blue-700 bg-blue-50" : "text-gray-600 hover:bg-gray-100");
-  document.getElementById("nav-sent").className =
-    "flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer text-sm font-medium " +
-    (active === "sent" ? "text-blue-700 bg-blue-50" : "text-gray-600 hover:bg-gray-100");
-}
-
-function showView(name) {
-  ["list","read","compose"].forEach(v =>
-    document.getElementById(`view-${v}`).classList.toggle("hidden", v !== name)
-  );
-}
-
-// ---------------------------------------------------------
-// Usuários
-// ---------------------------------------------------------
-async function loadUsers() {
-  const res = await fetch(`${API}/users`, { headers: authHeaders() });
-  allUsers = await res.json();
-  populateSelects();
-}
-
-function populateSelects() {
-  const others = allUsers.filter(u => u.email !== state.email);
-  const opts   = others.map(u => `<option value="${u.email}">${u.name} &lt;${u.email}&gt;</option>`).join("");
-  document.getElementById("compose-to").innerHTML = opts;
-  document.getElementById("compose-cc").innerHTML = opts;
-}
-
-// ---------------------------------------------------------
-// Inbox / Sent
-// ---------------------------------------------------------
-async function showInbox() {
-  state.currentView = "inbox";
-  setNav("inbox");
-  showView("list");
-  document.getElementById("list-title").textContent = "Caixa de Entrada";
-
-  const res  = await fetch(`${API}/emails/inbox`, { headers: authHeaders() });
-  if (!res.ok) return;
-  const data = await res.json();
-  const messages = data.messages || [];
-  renderList(messages, "inbox");
-
-  const unread = messages.filter(m => !m.read).length;
-  const badge  = document.getElementById("badge-inbox");
-  if (unread > 0) { badge.textContent = unread; badge.classList.remove("hidden"); }
-  else { badge.classList.add("hidden"); }
-}
-
-async function showSent() {
-  state.currentView = "sent";
-  setNav("sent");
-  showView("list");
-  document.getElementById("list-title").textContent = "Enviados";
-
-  const res  = await fetch(`${API}/emails/sent`, { headers: authHeaders() });
-  if (!res.ok) return;
-  const data = await res.json();
-  renderList(data.messages || [], "sent");
-}
-
-// ---------------------------------------------------------
-// Render lista
-// ---------------------------------------------------------
-function renderList(messages, view) {
-  const tbody = document.getElementById("email-list");
-  if (!messages.length) {
-    tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-8 text-center text-gray-400">Nenhuma mensagem.</td></tr>`;
-    return;
-  }
-  tbody.innerHTML = messages.map(m => {
-    const isUnread   = !m.read && view === "inbox";
-    const weight     = isUnread ? "font-bold text-gray-900" : "text-gray-600";
-    const dot        = isUnread ? `<span class="inline-block w-2 h-2 bg-blue-500 rounded-full mr-2 shrink-0"></span>` : "";
-
-    // Para inbox mostra remetente; para sent mostra destinatários
-    let counterpart;
-    if (view === "inbox") {
-      counterpart = m.from;
-    } else {
-      const toStr = Array.isArray(m.to) ? m.to.join(", ") : m.to;
-      const ccStr = Array.isArray(m.cc) && m.cc.length ? ` <span class="text-gray-400">(+CC)</span>` : "";
-      counterpart = toStr + ccStr;
-    }
-
-    // Badge CC na inbox
-    const ccBadge = (view === "inbox" && Array.isArray(m.cc) && m.cc.includes(state.email))
-      ? `<span class="ml-1 text-xs bg-gray-100 text-gray-500 px-1 rounded">CC</span>` : "";
-
-    return `
-      <tr class="border-b cursor-pointer hover:bg-slate-50" onclick="readEmail('${m.id}')">
-        <td class="px-4 py-3 text-sm ${weight} max-w-0 truncate">
-          <div class="flex items-center">${dot}<span class="truncate">${counterpart}</span>${ccBadge}</div>
-        </td>
-        <td class="px-4 py-3 text-sm ${weight}">${m.subject}</td>
-        <td class="px-4 py-3 text-xs text-gray-400 text-right whitespace-nowrap">${formatDate(m.timestamp)}</td>
-        <td class="px-4 py-3 text-center">
-          <button onclick="event.stopPropagation(); deleteEmail('${m.id}')"
-            class="text-gray-300 hover:text-red-400 transition-colors text-base">🗑</button>
-        </td>
-      </tr>`;
-  }).join("");
-}
-
-// ---------------------------------------------------------
-// Leitura
-// ---------------------------------------------------------
-async function readEmail(id) {
-  const res = await fetch(`${API}/emails/${id}`, { headers: authHeaders() });
-  if (!res.ok) return;
-  const msg = await res.json();
-  state.currentEmailId = id;
-
-  document.getElementById("read-subject").textContent = msg.subject;
-  document.getElementById("read-from").textContent    = msg.from;
-  document.getElementById("read-to").textContent      = Array.isArray(msg.to) ? msg.to.join(", ") : msg.to;
-  document.getElementById("read-date").textContent    = formatDate(msg.timestamp);
-
-  const ccRow = document.getElementById("read-cc-row");
-  if (Array.isArray(msg.cc) && msg.cc.length) {
-    document.getElementById("read-cc").textContent = msg.cc.join(", ");
-    ccRow.classList.remove("hidden");
-  } else {
-    ccRow.classList.add("hidden");
-  }
-
-  document.getElementById("read-body").textContent = msg.body;
-  showView("read");
-}
-
-async function backToList() {
-  if (state.currentView === "sent") await showSent();
-  else await showInbox();
-}
-
-// ---------------------------------------------------------
-// Delete
-// ---------------------------------------------------------
-async function deleteEmail(id) {
-  const res = await fetch(`${API}/emails/${id}`, { method: "DELETE", headers: authHeaders() });
-  if (!res.ok) return;
-  if (state.currentView === "sent") await showSent();
-  else await showInbox();
-}
-
-async function deleteCurrentEmail() {
-  if (!state.currentEmailId) return;
-  const res = await fetch(`${API}/emails/${state.currentEmailId}`, { method: "DELETE", headers: authHeaders() });
-  if (!res.ok) return;
-  state.currentEmailId = null;
-  await backToList();
-}
-
-// ---------------------------------------------------------
-// Composição
-// ---------------------------------------------------------
-function compose() {
-  showView("compose");
-  document.getElementById("compose-subject").value = "";
-  document.getElementById("compose-body").value    = "";
-  document.getElementById("compose-error").classList.add("hidden");
-  document.getElementById("compose-ok").classList.add("hidden");
-  // Limpa seleções nos selects
-  Array.from(document.getElementById("compose-to").options).forEach(o => o.selected = false);
-  Array.from(document.getElementById("compose-cc").options).forEach(o => o.selected = false);
-}
-
-async function sendEmail() {
-  const toSel  = document.getElementById("compose-to");
-  const ccSel  = document.getElementById("compose-cc");
-  const subject = document.getElementById("compose-subject").value.trim();
-  const body    = document.getElementById("compose-body").value.trim();
-  const errEl   = document.getElementById("compose-error");
-  const okEl    = document.getElementById("compose-ok");
-
-  errEl.classList.add("hidden");
-  okEl.classList.add("hidden");
-
-  const toSelected = Array.from(toSel.selectedOptions).map(o => o.value);
-  const ccSelected = Array.from(ccSel.selectedOptions).map(o => o.value);
-
-  if (!toSelected.length) {
-    errEl.textContent = "Selecione pelo menos um destinatário em 'Para'.";
-    errEl.classList.remove("hidden");
-    return;
-  }
-  if (!subject) {
-    errEl.textContent = "Preencha o assunto.";
-    errEl.classList.remove("hidden");
-    return;
-  }
-  if (!body) {
-    errEl.textContent = "Escreva a mensagem.";
-    errEl.classList.remove("hidden");
-    return;
-  }
-
-  const res = await fetch(`${API}/emails/send`, {
-    method: "POST",
-    headers: authHeaders(),
-    body: JSON.stringify({ to: toSelected.join(","), cc: ccSelected.join(","), subject, body }),
-  });
-
-  if (!res.ok) {
-    const data = await res.json();
-    errEl.textContent = data.detail || "Erro ao enviar.";
-    errEl.classList.remove("hidden");
-    return;
-  }
-
-  okEl.classList.remove("hidden");
-  setTimeout(() => showSent(), 1200);
-}
-</script>
+<script src="/js/utils.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/email.js"></script>
+<script src="/js/agenda.js"></script>
 </body>
 </html>
