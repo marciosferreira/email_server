@@ -5,6 +5,7 @@ let state = {
   email: null,
   name: null,
   currentView: "inbox",       // inbox | sent | read | compose | agenda | agenda-form
+  currentFolder: "inbox",     // inbox | sent
   currentEmailId: null,
   currentCompromissoId: null, // null = criar, string = editar
 };

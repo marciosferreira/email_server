@@ -2,6 +2,7 @@
 // Inbox / Sent
 // ---------------------------------------------------------
 async function showInbox() {
+  state.currentFolder = "inbox";
   setNav("inbox");
   showView("list");
   document.getElementById("list-title").textContent = "Caixa de Entrada";
@@ -19,6 +20,7 @@ async function showInbox() {
 }
 
 async function showSent() {
+  state.currentFolder = "sent";
   setNav("sent");
   showView("list");
   document.getElementById("list-title").textContent = "Enviados";
@@ -99,7 +101,7 @@ async function readEmail(id) {
 }
 
 async function backToList() {
-  if (state.currentView === "sent") await showSent();
+  if (state.currentFolder === "sent") await showSent();
   else await showInbox();
 }
 
@@ -109,7 +111,7 @@ async function backToList() {
 async function deleteEmail(id) {
   const res = await fetch(`${API}/emails/${id}`, { method: "DELETE", headers: authHeaders() });
   if (!res.ok) return;
-  if (state.currentView === "sent") await showSent();
+  if (state.currentFolder === "sent") await showSent();
   else await showInbox();
 }
 

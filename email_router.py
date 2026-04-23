@@ -251,7 +251,7 @@ def delete_message(message_id: str, request: Request):
 
         if is_sender:
             conn.execute("UPDATE messages SET deleted_by_sender = 1 WHERE id = ?", (message_id,))
-        else:
+        if is_recipient:
             deleted = json.loads(row["deleted_by_recipient"])
             if my_email not in deleted:
                 deleted.append(my_email)

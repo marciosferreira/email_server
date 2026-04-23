@@ -78,8 +78,7 @@ async function loadUsers() {
 }
 
 function populateSelects() {
-  const others = allUsers.filter(u => u.email !== state.email);
-  const opts   = others.map(u =>
+  const opts = allUsers.map(u =>
     `<option value="${u.email}">${u.name} &lt;${u.email}&gt;</option>`
   ).join("");
   document.getElementById("compose-to").innerHTML = opts;
