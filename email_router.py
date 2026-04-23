@@ -65,11 +65,6 @@ def send_email(payload: SendEmailRequest, request: Request):
             detail=f"Destinatário(s) não encontrado(s): {', '.join(invalid)}. O email não pôde ser enviado."
         )
 
-    to_list = [e for e in to_list if e != sender["email"]]
-    cc_list = [e for e in cc_list if e != sender["email"]]
-
-    if not to_list:
-        raise HTTPException(status_code=422, detail="Você não pode enviar um email apenas para si mesmo.")
 
     msg_id    = str(uuid.uuid4())
     timestamp = datetime.now(timezone.utc).isoformat()
