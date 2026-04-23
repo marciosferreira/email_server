@@ -1,4 +1,5 @@
 import json
+import re
 import uuid
 from datetime import datetime, timezone
 from typing import List, Optional, Union
@@ -10,12 +11,15 @@ from db import EMAIL_TO_TOKEN, get_db, get_user, parse_emails
 
 router = APIRouter(tags=["Email"])
 
+_EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+
 
 class SendEmailRequest(BaseModel):
     to: Union[str, List[str]]
     cc: Union[str, List[str], None] = ""
     subject: str
     body: str
+    sender: Optional[str] = None
 
 
 def _is_recipient_of(msg, email: str) -> bool:
@@ -51,6 +55,11 @@ def _row_to_dict(msg, my_email: str) -> dict:
 @router.post("/emails/send", status_code=201)
 def send_email(payload: SendEmailRequest, request: Request):
     sender = get_user(request)
+
+    if payload.sender is not None:
+        if not _EMAIL_RE.match(payload.sender):
+            raise HTTPException(status_code=422, detail="Campo 'sender' deve ser um email válido (ex: nome@dominio.com).")
+        sender = {"email": payload.sender}
 
     to_list = parse_emails(payload.to)
     cc_list = parse_emails(payload.cc or "")
