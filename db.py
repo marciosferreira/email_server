@@ -17,7 +17,18 @@ USERS = {
     "aluno-08": {"name": "Aluno 8",  "email": "aluno08@curso.ia", "password": "1234"},
     "aluno-09": {"name": "Aluno 9",  "email": "aluno09@curso.ia", "password": "1234"},
     "aluno-10": {"name": "Aluno 10", "email": "aluno10@curso.ia", "password": "1234"},
+    "aluno-11": {"name": "Aluno 11",  "email": "aluno11@curso.ia", "password": "1234"},
+    "aluno-12": {"name": "Aluno 12",  "email": "aluno12@curso.ia", "password": "1234"},
+    "aluno-13": {"name": "Aluno 13",  "email": "aluno13@curso.ia", "password": "1234"},
+    "aluno-14": {"name": "Aluno 14",  "email": "aluno14@curso.ia", "password": "1234"},
+    "aluno-15": {"name": "Aluno 15",  "email": "aluno15@curso.ia", "password": "1234"},
+    "aluno-16": {"name": "Aluno 16",  "email": "aluno16@curso.ia", "password": "1234"},
+    "aluno-17": {"name": "Aluno 17",  "email": "aluno17@curso.ia", "password": "1234"},
+    "aluno-18": {"name": "Aluno 18",  "email": "aluno18@curso.ia", "password": "1234"},
+    "aluno-19": {"name": "Aluno 19",  "email": "aluno19@curso.ia", "password": "1234"},
+    "aluno-20": {"name": "Aluno 20", "email": "aluno20@curso.ia", "password": "1234"},
 }
+
 
 EMAIL_TO_TOKEN = {v["email"]: k for k, v in USERS.items()}
 DB_PATH = os.environ.get("DB_PATH", "email.db")
